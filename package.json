@@ -1,0 +1,23 @@
+{
+  "name": "clashstats-monorepo",
+  "version": "1.0.0",
+  "description": "ClashStat - Full stack Clash of Clans Dashboard App",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "start:server": "npm --prefix server run start",
+    "build:client": "npm --prefix client run build"
+  },
+  "keywords": [
+    "clash-of-clans",
+    "supercell",
+    "express",
+    "react"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^10.0.5"
+  }
+}

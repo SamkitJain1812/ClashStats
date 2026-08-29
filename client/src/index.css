@@ -1,0 +1,227 @@
+@import './assets/fonts/fonts.css';
+
+:root {
+  /* Supercell Store Color Palette */
+  --bg-wooden-header: #d4bc96;
+  --bg-body-brown: #24140a;
+  --bg-section-wood: #4a2b16;
+  --bg-cloud-purple: #1c1533;
+  --bg-card-slate: #181e32;
+  --bg-card-inner: #0f1423;
+
+  /* Gold & Accents */
+  --gold-main: #ffc72c;
+  --gold-light: #ffe885;
+  --gold-dark: #c98818;
+  --border-gold: #e5a823;
+  --purple-accent: #9333ea;
+  --green-win: #4cd964;
+  --red-loss: #ff3b30;
+  
+  /* Typography Colors */
+  --text-main: #ffffff;
+  --text-gold-light: #fef08a;
+  --text-muted-beige: #e5d3c0;
+  --text-muted-dark: #a39382;
+
+  /* Asset Fonts */
+  --font-game: var(--font-coc-title);
+  --font-body: var(--font-coc-body);
+  --font-heading: var(--font-coc-heading);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-body-brown);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(255, 199, 44, 0.1) 0%, transparent 60%),
+    repeating-linear-gradient(45deg, rgba(0,0,0,0.2) 0, rgba(0,0,0,0.2) 25px, transparent 25px, transparent 50px);
+  background-attachment: fixed;
+}
+
+/* White 3D Game Font with Black Outline */
+.font-game-3d {
+  font-family: var(--font-game);
+  color: #ffffff !important;
+  text-shadow: 
+    3px 3px 0 #000, 
+    -2px -2px 0 #000, 
+    2px -2px 0 #000, 
+    -2px 2px 0 #000,
+    0 4px 12px rgba(0,0,0,0.8);
+  letter-spacing: 1px;
+}
+
+.text-gold-game {
+  font-family: var(--font-game);
+  color: var(--gold-main);
+  text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+}
+
+/* Supercell Wooden Top Bar Header */
+.supercell-wooden-header {
+  background: linear-gradient(180deg, #e4cca4 0%, #c5aa80 100%);
+  border-bottom: 4px solid #8c6843;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+  position: relative;
+  z-index: 1000;
+}
+
+.wood-header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.coc-asset-logo-img {
+  height: 48px;
+  width: auto;
+  cursor: pointer;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+  transition: transform 0.2s ease;
+}
+
+.coc-asset-logo-img:hover {
+  transform: scale(1.04);
+}
+
+.supercell-id-profile-btn {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 30px;
+  padding: 4px 12px 4px 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.supercell-id-profile-btn:hover { background: rgba(0, 0, 0, 0.35); }
+
+.sc-avatar-circle {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+.hamburger-bars { display: flex; flex-direction: column; gap: 4px; }
+.bar-line { width: 18px; height: 3px; background-color: #22140a; border-radius: 2px; }
+
+.store-sub-ribbon {
+  background: #361e0e;
+  color: var(--text-muted-beige);
+  text-align: center;
+  padding: 8px 16px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-bottom: 2px solid var(--border-gold);
+}
+
+/* Supercell Card Styling */
+.coc-card {
+  background: var(--bg-card-slate);
+  border: 2px solid var(--border-gold);
+  border-radius: 16px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.7);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.coc-card:hover {
+  border-color: #ffe37d;
+  transform: translateY(-3px);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 199, 44, 0.25);
+}
+
+.coc-card-gold {
+  background: linear-gradient(135deg, #21192e 0%, #191426 100%);
+  border: 2px solid var(--gold-main);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 199, 44, 0.2);
+}
+
+/* Cloud Section */
+.cloud-purple-section {
+  background: linear-gradient(135deg, #1c1533 0%, #291e4b 50%, #120e24 100%);
+  border: 2px solid var(--border-gold);
+  border-radius: 18px;
+  padding: 36px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.7);
+}
+
+/* Wood Section Banner */
+.wood-section-banner {
+  background: linear-gradient(180deg, #4a2b16 0%, #361e0e 100%);
+  border-top: 2px solid var(--border-gold);
+  border-bottom: 2px solid var(--border-gold);
+  padding: 16px 24px;
+  text-align: center;
+  margin: 16px 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+}
+
+/* Buttons */
+.coc-btn {
+  background: linear-gradient(180deg, #ffe885 0%, #ffc72c 50%, #c98818 100%);
+  color: #1a0f07;
+  border: 2px solid #fff5c0;
+  border-bottom: 4px solid #8c5b0b;
+  border-radius: 12px;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 10px 22px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.coc-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.coc-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
+
+/* Side Drawer Overlay & Panel */
+.side-drawer-overlay {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px); z-index: 2000; display: flex; justify-content: flex-end; animation: fadeIn 0.2s ease;
+}
+.side-drawer-panel {
+  width: 100%; max-width: 360px; height: 100%; background: #141724; border-left: 2px solid var(--border-gold); box-shadow: -10px 0 30px rgba(0, 0, 0, 0.8); padding: 24px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; animation: slideLeft 0.25s ease;
+}
+.drawer-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 16px; }
+.drawer-close-btn { background: none; border: none; color: var(--text-muted-beige); cursor: pointer; }
+.drawer-close-btn:hover { color: #fff; }
+.drawer-user-card { background: #1c2032; border: 1px solid var(--border-gold); border-radius: 14px; padding: 16px; display: flex; align-items: center; gap: 14px; }
+.drawer-user-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); display: flex; align-items: center; justify-content: center; border: 2px solid #fff; color: #fff; }
+.drawer-menu-list { display: flex; flex-direction: column; gap: 8px; }
+.drawer-menu-item { background: #191e30; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 14px 18px; color: #fff; text-decoration: none; font-family: var(--font-heading); font-weight: 700; display: flex; align-items: center; justify-content: space-between; transition: background 0.2s, border-color 0.2s; }
+.drawer-menu-item:hover, .drawer-menu-item.active { background: #262c42; border-color: var(--gold-border); color: var(--gold-main); }
+
+/* Floating Bottom Bar */
+.supercell-floating-bar {
+  position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: #ffffff; color: #22140a; border-radius: 30px; padding: 8px 24px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6); display: flex; align-items: center; gap: 14px; z-index: 900; border: 2px solid var(--gold-main);
+}
+.floating-pts-badge { background: var(--gold-gradient); color: #121a24; font-family: var(--font-game); font-size: 0.85rem; padding: 2px 10px; border-radius: 12px; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideLeft { from { transform: translateX(100%); } to { transform: translateX(0); } }

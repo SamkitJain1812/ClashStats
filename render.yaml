@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: clashstat-backend
+    env: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: COC_API_TOKEN
+        sync: false # Set securely in Render dashboard
+      - key: DEFAULT_PLAYER_TAG
+        value: "#Y8YLP9RR2"
+      - key: DEFAULT_CLAN_TAG
+        value: "#2GP20YPVP"
