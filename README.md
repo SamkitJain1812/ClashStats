@@ -87,8 +87,8 @@ Edit `server/.env` with your API token and preferred defaults:
 ```env
 PORT=5000
 COC_API_TOKEN=your_clash_of_clans_jwt_token_here
-DEFAULT_PLAYER_TAG=#Y8YLP9RR2
-DEFAULT_CLAN_TAG=#2GP20YPVP
+DEFAULT_PLAYER_TAG=#Your_player_tag
+DEFAULT_CLAN_TAG=#Your_Clan_tag
 ```
 
 > [!NOTE]
@@ -132,8 +132,8 @@ npm run dev
 5. In **Environment Variables**, add:
    * `PORT`: `10000`
    * `COC_API_TOKEN`: *(Your CoC Developer API Token)*
-   * `DEFAULT_PLAYER_TAG`: `#Y8YLP9RR2`
-   * `DEFAULT_CLAN_TAG`: `#2GP20YPVP`
+   * `DEFAULT_PLAYER_TAG`: `#Your_player_tag`
+   * `DEFAULT_CLAN_TAG`: `#Your_Clan_tag`
 6. Click **Deploy Web Service**.
 7. Note your live backend URL (e.g. `https://clashstats-a97q.onrender.com`).
 
