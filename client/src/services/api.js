@@ -69,3 +69,20 @@ export async function getCwlGroup(tag) {
   const response = await axios.get(`${API_BASE}/cwl/group/${formatted}`);
   return response.data;
 }
+
+/**
+ * Ping backend health/keepalive silently to wake services if needed.
+ */
+export async function pingHealth() {
+  try {
+    const response = await axios.get(`${API_BASE}/health/ping`, { timeout: 8000 });
+    return response.data;
+  } catch {
+    try {
+      const response = await axios.get(`${API_BASE}/health`, { timeout: 8000 });
+      return response.data;
+    } catch {
+      return null;
+    }
+  }
+}

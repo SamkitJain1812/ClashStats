@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -8,6 +8,7 @@ import PlayerPage from './pages/PlayerPage';
 import ClanPage from './pages/ClanPage';
 import WarPage from './pages/WarPage';
 import CwlPage from './pages/CwlPage';
+import { pingHealth } from './services/api';
 
 export default function App() {
   const [activePlayerTag, setActivePlayerTag] = useState(() => {
@@ -16,6 +17,11 @@ export default function App() {
   const [activeClanTag, setActiveClanTag] = useState(() => {
     return localStorage.getItem('clashstat_clan_tag') || '';
   });
+
+  // Silent keepalive ping on startup to ensure backend is warm
+  useEffect(() => {
+    pingHealth();
+  }, []);
 
   // Handle Tag Search from Search Bar
   const handleTagSearch = (tag) => {

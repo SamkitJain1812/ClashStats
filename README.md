@@ -1,109 +1,184 @@
 # ClashStat — Clash of Clans Telemetry Dashboard
 
-[![Supercell Store Theme](https://img.shields.io/badge/Theme-Supercell%20Store-0b1017?style=for-the-badge&logo=supercell&logoColor=ffc72c)](https://store.supercell.com)
-[![Node.js Express Proxy](https://img.shields.io/badge/Backend-Node.js%20%2F%20Express-417e38?style=for-the-badge&logo=express)](https://expressjs.com)
-[![React Vite](https://img.shields.io/badge/Frontend-React%2019%20%2F%20Vite-61dafb?style=for-the-badge&logo=react)](https://vite.dev)
+[![Live Frontend](https://img.shields.io/badge/Live%20Frontend-clash--stats--navy.vercel.app-00dfa2?style=for-the-badge&logo=vercel&logoColor=white)](https://clash-stats-navy.vercel.app/)
+[![Live Backend](https://img.shields.io/badge/Live%20Backend-clashstats--a97q.onrender.com-417e38?style=for-the-badge&logo=render&logoColor=white)](https://clashstats-a97q.onrender.com)
+[![React 19 Vite](https://img.shields.io/badge/Frontend-React%2019%20%2F%20Vite-61dafb?style=for-the-badge&logo=react)](https://vite.dev)
+[![Node.js Express](https://img.shields.io/badge/Backend-Node.js%20%2F%20Express-000000?style=for-the-badge&logo=express)](https://expressjs.com)
 
-**ClashStat** is a full-stack, Clash of Clans telemetry dashboard application modeled after Supercell's official store branding ([store.supercell.com](https://store.supercell.com)). It connects directly to the official Clash of Clans REST API through a secure, rate-limited Node.js proxy.
+**ClashStat** is a modern, high-performance Clash of Clans telemetry and clan management dashboard inspired by the Supercell Store design system. It connects directly to the official Supercell REST API through a secure, caching Express proxy.
+
+---
+
+## 🔗 Live Deployments
+
+* **Frontend Web App:** [https://clash-stats-navy.vercel.app/](https://clash-stats-navy.vercel.app/)
+* **Backend API Base:** [https://clashstats-a97q.onrender.com](https://clashstats-a97q.onrender.com)
+* **API Health & Keepalive:** [https://clashstats-a97q.onrender.com/api/v1/health/ping](https://clashstats-a97q.onrender.com/api/v1/health/ping)
 
 ---
 
 ## 🌟 Key Features
 
-1. **Supercell Store Visual Identity:** Dark slate backgrounds (`#0b1017`), CoC blue UI chrome (`#1d5da9`), beveled metallic gold trim (`#ffc72c`), Town Hall level badges, and heavy gaming typography.
-2. **Tag Lookup & Presets:** Search bar accepting any Player Tag (`#Y8YLP9RR2`) or Clan Tag (`#2GP20YPVP`) with live tag normalization (`#` encoded as `%23`).
-3. **Player Profile Telemetry:** Town Hall badge (with weapon level), trophies, attack/defense wins, war stars, donation ratio indicator & health progress bar, hero/troop arsenal level pills, and achievements progress summary.
-4. **Clan Roster & Leaderboard:** Sortable member roster table by Trophies, Donations Given, Donations Received, Town Hall Level, or Role. Click any member to view their player profile.
-5. **Live Clan Wars & War Log:** Real-time war scorecard (Stars, Destruction %, Attacks Remaining), member attack tracker table, and historical war log analytics.
-6. **Clan War League (CWL):** 8-Clan Group standings table, 7-round battle log tabs, and member medal calculator. Includes an **Interactive Preview Mode** for periods when CWL is inactive.
-7. **Auto-Sync & Manual Refresh:** Live 60s auto-refresh timer with a manual refresh button.
-8. **Actionable 403 IP Whitelist Helper:** Error screen detecting IP whitelist issues and guiding users on how to whitelist their machine's IP in the Supercell Developer Portal.
+1. **Supercell Store Aesthetic:** Dark slate backgrounds (`#0b1017`), CoC electric blue chrome (`#1d5da9`), beveled metallic gold accents (`#ffc72c`), and custom Town Hall badges.
+2. **Player Profile Telemetry:** Real-time stats including Town Hall level and weapon level, trophies, attack/defense win rates, war stars, donation ratio meters, hero/troop levels, and achievements.
+3. **Clan Roster & Leaderboard:** Sortable roster by Trophies, Donations Given, Donations Received, Town Hall Level, and Clan Role with one-click player drilldown.
+4. **Live Clan Wars & War Log:** Live war scorecards (Stars, Destruction %, Attacks Remaining), round-by-round attack timeline, and historical war logs.
+5. **Clan War League (CWL):** 8-Clan Group standings table, 7-round battle logs, and member medal calculator with an interactive preview fallback for off-season periods.
+6. **Smart Caching & Rate Limiting:** Built-in in-memory caching (`node-cache`) to preserve API quotas and deliver sub-millisecond responses.
+7. **Silent Once-a-Month Keepalive:** Built-in Vercel Cron and GitHub Actions workflow running on the 1st of every month to keep the frontend and backend warm and prevent platform dormancy without sending notification or alert emails.
 
 ---
 
-## 🛠️ Environment Variables
+## 📁 Repository Structure
 
-### Backend (`server/.env`)
-| Variable | Required | Description | Example |
-| :--- | :---: | :--- | :--- |
-| `PORT` | No | Express server listener port (default: 5000) | `5000` |
-| `COC_API_TOKEN` | **Yes** | Bearer JWT token from [CoC Developer Portal](https://developer.clashofclans.com) | `eyJhbGci...` |
-| `DEFAULT_PLAYER_TAG` | No | Initial player tag loaded on startup | `#Y8YLP9RR2` |
-| `DEFAULT_CLAN_TAG` | No | Initial clan tag loaded on startup | `#2GP20YPVP` |
-
-### Frontend (`client/.env` or Vercel Environment Variables)
-| Variable | Required | Description | Example |
-| :--- | :---: | :--- | :--- |
-| `VITE_API_URL` | Production | Full base URL of deployed backend proxy (leave empty for local Vite dev) | `https://clashstat-api.onrender.com/api/v1` |
+```text
+ClashStats/
+├── .github/workflows/
+│   └── monthly-ping.yml       # Silent monthly keepalive workflow (0 0 1 * *)
+├── api/
+│   └── index.js               # Vercel serverless function entry point
+├── client/                    # React 19 + Vite frontend application
+│   ├── src/
+│   │   ├── components/        # Reusable UI components (Navbar, Footer, Badges, etc.)
+│   │   ├── pages/             # Dashboard, Player, Clan, War, and CWL views
+│   │   └── services/api.js    # Axios API client with automatic health ping
+│   └── package.json
+├── server/                    # Node.js Express backend proxy
+│   ├── routes/                # Health, Player, Clan, and CWL route handlers
+│   ├── middleware/            # Caching and error handling
+│   ├── index.js               # Standalone Express server entry point
+│   ├── .env.example           # Environment template
+│   └── package.json
+├── render.yaml                # Render Infrastructure-as-Code blueprint
+├── vercel.json                # Vercel routing and native cron configuration
+└── package.json               # Monorepo root scripts
+```
 
 ---
 
-## 🚀 Local Setup Instructions
+## 💻 How to Download and Run Locally
 
-### 1. Register API Key in Supercell Developer Portal
-1. Obtain your public IP by visiting [ifconfig.me](https://ifconfig.me) or running `curl ifconfig.me`.
-2. Log in to [developer.clashofclans.com](https://developer.clashofclans.com/).
-3. Create a new API Key and add your public IP address to the **Allowed IP Addresses** whitelist.
-4. Copy your key token.
+### 1. Prerequisites
+* **Node.js** (v18.0.0 or higher) & **npm**
+* **Git** installed on your machine
+* An official API Key from the [Clash of Clans Developer Portal](https://developer.clashofclans.com/)
 
-### 2. Configure Local Environment
-Create `server/.env`:
+### 2. Clone the Repository
+```bash
+git clone https://github.com/SamkitJain1812/ClashStats.git
+cd ClashStats
+```
+
+### 3. Install All Dependencies
+Install the root and subproject dependencies in one step:
+```bash
+npm install
+npm install --prefix client
+npm install --prefix server
+```
+
+### 4. Create and Configure `server/.env`
+Create a `.env` file inside the `server/` folder:
+```bash
+cp server/.env.example server/.env
+```
+
+Edit `server/.env` with your API token and preferred defaults:
 ```env
 PORT=5000
-COC_API_TOKEN=your_jwt_key_here
+COC_API_TOKEN=your_clash_of_clans_jwt_token_here
 DEFAULT_PLAYER_TAG=#Y8YLP9RR2
 DEFAULT_CLAN_TAG=#2GP20YPVP
 ```
 
-### 3. Run Backend Proxy Server
-From root directory:
-```powershell
-npm run dev:server
+> [!NOTE]
+> **Whitelisting Your Local IP:** When creating a key on [developer.clashofclans.com](https://developer.clashofclans.com/), Supercell requires your public IPv4 address. Find your public IP by visiting [ifconfig.me](https://ifconfig.me) or running `curl ifconfig.me`, and add it to your key's **Allowed IP Addresses**.
+
+### 5. Start the Development Servers
+
+#### Option A: Run Both Concurrently (Recommended)
+From the root directory, run:
+```bash
+npm run dev
 ```
-*(Server listens on `http://localhost:5000`)*
+* **Frontend:** `http://localhost:3000` (or the port indicated by Vite)
+* **Backend:** `http://localhost:5000`
 
-### 4. Run React Frontend Client
-In a second terminal:
-```powershell
-npm run dev:client
-```
-*(Open `http://localhost:3000` in your browser)*
+#### Option B: Run in Separate Terminals
+* **Terminal 1 (Backend):**
+  ```bash
+  npm run dev:server
+  ```
+* **Terminal 2 (Frontend):**
+  ```bash
+  npm run dev:client
+  ```
 
 ---
 
-## 🌐 Production Deployment Guide
+## 🚀 How to Deploy
 
-### Phase 1: Deploy Backend to Render (Node Web Service)
-1. Push your repository to GitHub / GitLab.
-2. Log in to [Render.com](https://render.com) and click **New +** -> **Web Service**.
-3. Connect your repository and configure:
-   - **Root Directory:** `server`
-   - **Environment:** `Node`
-   - **Build Command:** `npm install`
-   - **Start Command:** `npm start`
+### Step 1: Deploy Backend to Render
+
+1. Log in to your [Render Dashboard](https://dashboard.render.com/).
+2. Click **New +** -> **Web Service**.
+3. Select your GitHub repository (`ClashStats`).
+4. Set the following build settings:
+   * **Name:** `clashstats-backend`
+   * **Root Directory:** `server`
+   * **Environment:** `Node`
+   * **Build Command:** `npm install`
+   * **Start Command:** `npm start`
+5. In **Environment Variables**, add:
+   * `PORT`: `10000`
+   * `COC_API_TOKEN`: *(Your CoC Developer API Token)*
+   * `DEFAULT_PLAYER_TAG`: `#Y8YLP9RR2`
+   * `DEFAULT_CLAN_TAG`: `#2GP20YPVP`
+6. Click **Deploy Web Service**.
+7. Note your live backend URL (e.g. `https://clashstats-a97q.onrender.com`).
+
+#### Whitelisting Render's IP on Supercell Developer Portal
+Render web services make outbound requests from specific IP ranges:
+1. In your Render service, go to **Settings** or **Connect** and find your **Outbound IPv4 Addresses**.
+2. Open the [Supercell Developer Portal](https://developer.clashofclans.com/), edit your API key, and add each of Render's outbound IP addresses.
+
+---
+
+### Step 2: Deploy Frontend to Vercel
+
+1. Log in to [Vercel](https://vercel.com/) and click **Add New** -> **Project**.
+2. Import your `ClashStats` repository.
+3. Configure the project:
+   * **Framework Preset:** `Vite`
+   * **Root Directory:** `./` (Leave as root so Vercel uses `vercel.json`)
 4. In **Environment Variables**, add:
-   - `COC_API_TOKEN` = *(Your CoC Developer API Token)*
-   - `DEFAULT_PLAYER_TAG` = `#Y8YLP9RR2`
-   - `DEFAULT_CLAN_TAG` = `#2GP20YPVP`
-5. Click **Deploy Web Service** and note your backend URL (e.g. `https://clashstat-api.onrender.com`).
+   * `VITE_API_URL`: `https://clashstats-a97q.onrender.com/api/v1`
+   * `RENDER_BACKEND_URL`: `https://clashstats-a97q.onrender.com`
+5. Click **Deploy**. Your app will be live at `https://clash-stats-navy.vercel.app/`!
 
 ---
 
-### Phase 2: Register Render's Outbound Static IP with Supercell
-To prevent `403 Forbidden` errors in production, register Render's outbound IP addresses in your Supercell key whitelist:
+## 🔒 Security & Token Privacy FAQ
 
-1. In your Render Dashboard, select your `clashstat-backend` web service.
-2. Look at the **Connect** or **Settings** panel for your web service's **Outbound IPv4 Addresses** (e.g. `216.24.57.1`, `52.203.24.120`, etc.).
-3. Return to the [Supercell Developer Portal](https://developer.clashofclans.com/).
-4. Edit your API Key and add each of Render's outbound IP addresses to the **Allowed IP Addresses** list.
-5. Save the key.
+### *Are my tokens or API keys visible to the public on GitHub?*
+**No, they are completely private.**
+* **Local `.env` files:** The `.gitignore` file strictly excludes all `.env`, `.env.*`, and `server/.env` files. They will never be tracked or pushed to GitHub.
+* **GitHub Secrets / Tokens:** Any token added under your GitHub repository (`Settings -> Secrets and variables -> Actions`) is encrypted by GitHub. It is never displayed to visitors, repository viewers, or printed in logs.
+* **Production Platforms:** Tokens placed in the Render and Vercel Environment Variables dashboards are encrypted at rest and never exposed to client browsers.
 
 ---
 
-### Phase 3: Deploy Frontend to Vercel
-1. Log in to [Vercel.com](https://vercel.com) and click **Add New** -> **Project**.
-2. Import your GitHub repository.
-3. Set **Root Directory** to `client`.
-4. In **Environment Variables**, add:
-   - `VITE_API_URL` = `https://clashstat-api.onrender.com/api/v1`
-5. Click **Deploy**. Vercel will build your Vite React app and publish your live dashboard at `https://clashstat.vercel.app`!
+## ⏰ Automated Monthly Keepalive (No Emails)
+
+Free-tier web services on platforms like Render and Vercel can sleep or be suspended if dormant for long periods. ClashStat includes two built-in, silent keepalive mechanisms that run once a month without sending any emails:
+
+1. **Vercel Native Cron (`vercel.json`):**
+   * Configured on schedule `0 0 1 * *` (midnight UTC on the 1st of every month).
+   * Automatically invokes `/api/ping`, which keeps Vercel alive and sends a wake-up ping to the Render backend URL.
+   * Vercel Crons send **zero emails**.
+2. **GitHub Actions Workflow (`.github/workflows/monthly-ping.yml`):**
+   * Runs on the 1st of every month at 00:00 UTC using GitHub Actions.
+   * Uses `curl` to ping both the frontend and backend health endpoints.
+   * Built with safe execution fallbacks (`|| true`), guaranteeing exit code 0 so GitHub **never triggers any failure or notification emails**.
+3. **Frontend Startup Ping:**
+   * Every time a user opens the frontend, `pingHealth()` executes quietly in the background to warm up the backend server immediately.

@@ -1,0 +1,28 @@
+name: Monthly Keepalive Trigger
+
+on:
+  schedule:
+    # Runs at 00:00 UTC on day 1 of every month
+    - cron: '0 0 1 * *'
+  workflow_dispatch: # Allows manual trigger from the GitHub Actions UI
+
+jobs:
+  keepalive:
+    name: Silent Monthly Ping
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Frontend and Backend
+        run: |
+          echo "Starting monthly keepalive ping..."
+          
+          # Target URLs (set via GitHub Repository Secrets/Variables, or defaults to live deployed URLs)
+          FRONTEND_URL="${{ secrets.FRONTEND_URL || vars.FRONTEND_URL || 'https://clash-stats-navy.vercel.app' }}"
+          BACKEND_URL="${{ secrets.BACKEND_URL || vars.BACKEND_URL || 'https://clashstats-a97q.onrender.com' }}"
+
+          echo "Pinging Frontend URL..."
+          curl -s -L --max-time 30 -o /dev/null -w "Frontend HTTP Status: %{http_code}\n" "$FRONTEND_URL" || true
+
+          echo "Pinging Backend Health Endpoint..."
+          curl -s -L --max-time 60 -o /dev/null -w "Backend HTTP Status: %{http_code}\n" "$BACKEND_URL/api/v1/health/ping" || true
+
+          echo "Monthly keepalive ping completed successfully."

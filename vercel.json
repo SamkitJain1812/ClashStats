@@ -4,7 +4,14 @@
   "outputDirectory": "client/dist",
   "installCommand": "npm install && npm install --prefix client && npm install --prefix server",
   "framework": "vite",
+  "crons": [
+    {
+      "path": "/api/ping",
+      "schedule": "0 0 1 * *"
+    }
+  ],
   "rewrites": [
+    { "source": "/api/ping", "destination": "/api" },
     { "source": "/api/:path*", "destination": "/api" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]

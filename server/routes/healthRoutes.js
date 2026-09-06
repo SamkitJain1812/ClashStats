@@ -19,4 +19,33 @@ router.get('/', (req, res) => {
   });
 });
 
+/**
+ * GET /api/v1/health/ping
+ * Lightweight keepalive ping endpoint (used by monthly cron triggers)
+ */
+router.get('/ping', async (req, res) => {
+  const renderBackendUrl = process.env.RENDER_BACKEND_URL;
+  let renderWakeResult = null;
+
+  if (renderBackendUrl && !req.query.skip_forward) {
+    try {
+      const target = renderBackendUrl.replace(/\/$/, '') + '/api/v1/health/ping?skip_forward=true';
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      const response = await fetch(target, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      renderWakeResult = `Render pinged: status ${response.status}`;
+    } catch (err) {
+      renderWakeResult = `Render ping attempted: ${err.message}`;
+    }
+  }
+
+  res.json({
+    status: 'ok',
+    message: 'Monthly keepalive ping successful',
+    timestamp: new Date().toISOString(),
+    renderWakeResult
+  });
+});
+
 module.exports = router;
