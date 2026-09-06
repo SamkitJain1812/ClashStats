@@ -10,14 +10,31 @@ import WarPage from './pages/WarPage';
 import CwlPage from './pages/CwlPage';
 
 export default function App() {
-  const [activePlayerTag, setActivePlayerTag] = useState('');
-  const [activeClanTag, setActiveClanTag] = useState('');
+  const [activePlayerTag, setActivePlayerTag] = useState(() => {
+    return localStorage.getItem('clashstat_player_tag') || '';
+  });
+  const [activeClanTag, setActiveClanTag] = useState(() => {
+    return localStorage.getItem('clashstat_clan_tag') || '';
+  });
 
   // Handle Tag Search from Search Bar
   const handleTagSearch = (tag) => {
-    setActivePlayerTag(tag);
-    // Also reset clan tag so pages auto-resolve from player's clan
+    const cleanTag = tag?.trim() ? (tag.trim().startsWith('#') ? tag.trim().toUpperCase() : '#' + tag.trim().toUpperCase()) : '';
+    setActivePlayerTag(cleanTag);
+    if (cleanTag) {
+      localStorage.setItem('clashstat_player_tag', cleanTag);
+    } else {
+      localStorage.removeItem('clashstat_player_tag');
+    }
     setActiveClanTag('');
+    localStorage.removeItem('clashstat_clan_tag');
+  };
+
+  const handleClanTagChange = (clanTag) => {
+    setActiveClanTag(clanTag);
+    if (clanTag) {
+      localStorage.setItem('clashstat_clan_tag', clanTag);
+    }
   };
 
   return (
@@ -35,8 +52,9 @@ export default function App() {
               element={
                 <DashboardPage
                   activePlayerTag={activePlayerTag}
+                  setActivePlayerTag={handleTagSearch}
                   activeClanTag={activeClanTag}
-                  setActiveClanTag={setActiveClanTag}
+                  setActiveClanTag={handleClanTagChange}
                 />
               }
             />

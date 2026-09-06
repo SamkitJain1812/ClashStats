@@ -19,7 +19,7 @@ function errorHandler(err, req, res, next) {
         break;
       case 403:
         errorCode = 'FORBIDDEN_IP_OR_TOKEN';
-        userMessage = 'Access denied by Clash of Clans API. Please check your API Token and verify that your public IP address is whitelisted in the CoC Developer Portal.';
+        userMessage = cocData.message || 'Access denied by Clash of Clans API. Please check your API Token and verify that your public IP address is whitelisted in the CoC Developer Portal.';
         break;
       case 404:
         errorCode = 'RESOURCE_NOT_FOUND';

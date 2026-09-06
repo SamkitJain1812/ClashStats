@@ -28,24 +28,37 @@ export default function ErrorMessage({ error, onRetry }) {
 
         {is403 && (
           <div className="troubleshoot-box">
+            {(() => {
+              const ipMatch = errorMessage.match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/);
+              const detectedIp = ipMatch ? ipMatch[0] : null;
+              return detectedIp ? (
+                <div style={{ background: 'rgba(255, 199, 44, 0.15)', border: '1px solid var(--border-gold)', borderRadius: '8px', padding: '12px 16px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <Globe size={22} style={{ color: 'var(--gold-main)', flexShrink: 0 }} />
+                  <div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted-beige)', fontWeight: 600 }}>Your Public IP Detected by Clash of Clans API:</div>
+                    <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--gold-main)', fontFamily: 'monospace', letterSpacing: '1px' }}>{detectedIp}</div>
+                  </div>
+                </div>
+              ) : null;
+            })()}
             <h4 className="troubleshoot-heading">
               <Key size={16} />
               <span>How to fix your API Key IP Whitelist:</span>
             </h4>
             <ol className="troubleshoot-steps">
               <li>
-                Find your machine's current public IP address (run <code>curl ifconfig.me</code> in your terminal or visit <a href="https://ifconfig.me" target="_blank" rel="noreferrer">ifconfig.me</a>).
-              </li>
-              <li>
                 Log in to the official <a href="https://developer.clashofclans.com/" target="_blank" rel="noreferrer">Clash of Clans Developer Portal</a>.
               </li>
               <li>
-                Edit your API Key and add your public IP address to the <strong>Allowed IP Addresses</strong> whitelist.
+                Edit your API Key (or create a new one) and add your public IP address to the <strong>Allowed IP Addresses</strong> whitelist.
               </li>
               <li>
-                Ensure your API Key token is pasted correctly inside <code>server/.env</code>:
+                Copy the key token and paste it inside <code>server/.env</code>:
                 <br />
                 <code>COC_API_TOKEN=your_jwt_token_here</code>
+              </li>
+              <li>
+                Save the file and click <strong>RETRY REQUEST</strong> below.
               </li>
             </ol>
           </div>

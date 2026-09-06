@@ -5,35 +5,45 @@ import { getPlayerProfile, getClanDetails } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
 
-export default function DashboardPage({ activePlayerTag, activeClanTag, setActiveClanTag }) {
+export default function DashboardPage({ activePlayerTag, setActivePlayerTag, activeClanTag, setActiveClanTag }) {
   const [player, setPlayer] = useState(null);
   const [clan, setClan] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [inlineTag, setInlineTag] = useState('');
 
   const navigate = useNavigate();
 
   useEffect(() => {
     async function loadDashboardSummary() {
+      if (!activePlayerTag) {
+        setPlayer(null);
+        setClan(null);
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       setError(null);
       try {
-        const playerRes = await getPlayerProfile(activePlayerTag || 'default');
+        const playerRes = await getPlayerProfile(activePlayerTag);
         if (playerRes && playerRes.success) {
           setPlayer(playerRes.data);
 
-          const targetClanTag = playerRes.data.clan?.tag || activeClanTag || 'default';
+          const targetClanTag = playerRes.data.clan?.tag || activeClanTag;
           if (playerRes.data.clan?.tag && setActiveClanTag) {
             setActiveClanTag(playerRes.data.clan.tag);
           }
 
-          try {
-            const clanRes = await getClanDetails(targetClanTag);
-            if (clanRes && clanRes.success) {
-              setClan(clanRes.data);
+          if (targetClanTag) {
+            try {
+              const clanRes = await getClanDetails(targetClanTag);
+              if (clanRes && clanRes.success) {
+                setClan(clanRes.data);
+              }
+            } catch (clanErr) {
+              console.warn('Clan data fetch failed for dashboard summary:', clanErr);
             }
-          } catch (clanErr) {
-            console.warn('Clan data fetch failed for dashboard summary:', clanErr);
           }
         } else {
           setError(playerRes || { message: 'Failed to fetch player profile.' });
@@ -48,8 +58,36 @@ export default function DashboardPage({ activePlayerTag, activeClanTag, setActiv
     loadDashboardSummary();
   }, [activePlayerTag, activeClanTag]);
 
+  const handleInlineSearch = (e) => {
+    e?.preventDefault();
+    if (!inlineTag.trim()) return;
+    let cleanTag = inlineTag.trim();
+    if (!cleanTag.startsWith('#')) {
+      cleanTag = '#' + cleanTag;
+    }
+    if (setActivePlayerTag) {
+      setActivePlayerTag(cleanTag);
+    }
+    setInlineTag('');
+  };
+
   if (loading) return <LoadingSpinner message="LOADING SUPERCELL TELEMETRY HUB..." />;
-  if (error) return <ErrorMessage error={error} onRetry={() => window.location.reload()} />;
+  if (error) {
+    return (
+      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '24px' }}>
+        <ErrorMessage error={error} onRetry={() => window.location.reload()} />
+        <div style={{ textAlign: 'center', marginTop: '16px' }}>
+          <button
+            onClick={() => setActivePlayerTag && setActivePlayerTag('')}
+            className="coc-btn coc-btn-wooden"
+            style={{ margin: '0 auto' }}
+          >
+            TRY A DIFFERENT PLAYER TAG
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard-page-container">
@@ -72,7 +110,22 @@ export default function DashboardPage({ activePlayerTag, activeClanTag, setActiv
 
           <div className="hero-tag-box">
             <span className="tag-label">ACTIVE PLAYER TARGET:</span>
-            <span className="tag-val font-game text-gold-game">{player?.tag || activePlayerTag || '#Y8YLP9RR2'}</span>
+            {activePlayerTag ? (
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                <span className="tag-val font-game text-gold-game">{player?.tag || activePlayerTag}</span>
+                <button
+                  onClick={() => setActivePlayerTag && setActivePlayerTag('')}
+                  className="change-tag-btn"
+                  title="Change player tag"
+                >
+                  Change
+                </button>
+              </div>
+            ) : (
+              <span className="tag-val text-muted" style={{ fontStyle: 'italic', fontSize: '0.95rem' }}>
+                Enter your player tag
+              </span>
+            )}
           </div>
         </div>
       </section>
@@ -86,7 +139,7 @@ export default function DashboardPage({ activePlayerTag, activeClanTag, setActiv
       </div>
 
       {/* Quick Summary Telemetry Cards (Matching Image 1) */}
-      {player && (
+      {player ? (
         <section className="highlights-grid">
           {/* Active Player Card */}
           <div className="coc-card highlight-card" onClick={() => navigate('/player')}>
@@ -147,6 +200,48 @@ export default function DashboardPage({ activePlayerTag, activeClanTag, setActiv
               </div>
             </div>
           )}
+        </section>
+      ) : (
+        /* Empty State: Prompt user to enter player tag */
+        <section className="coc-card enter-tag-hero-card">
+          <div className="enter-tag-icon-circle">
+            <User size={36} className="text-gold-main" />
+          </div>
+          <h3 className="font-game-3d" style={{ fontSize: '1.8rem', color: '#fff', marginBottom: '8px' }}>
+            ENTER YOUR PLAYER TAG
+          </h3>
+          <p style={{ color: 'var(--text-muted-beige)', fontSize: '1rem', maxWidth: '580px', margin: '0 auto 24px', lineHeight: '1.6' }}>
+            Enter your Clash of Clans Player Tag below (or in the top search bar) to load your live town hall, trophies, war stars, clan roster, and hero telemetry.
+          </p>
+          <form onSubmit={handleInlineSearch} className="inline-tag-form">
+            <input
+              type="text"
+              placeholder="e.g. #Y8YLP9RR2 or #2PP0LP0C"
+              value={inlineTag}
+              onChange={(e) => setInlineTag(e.target.value)}
+              className="inline-tag-input"
+            />
+            <button type="submit" className="coc-btn coc-btn-gold inline-tag-btn">
+              LOAD STATS
+            </button>
+          </form>
+          <div className="quick-presets-row">
+            <span className="quick-presets-label">QUICK PRESETS:</span>
+            <button
+              type="button"
+              onClick={() => setActivePlayerTag && setActivePlayerTag('#Y8YLP9RR2')}
+              className="preset-chip"
+            >
+              #Y8YLP9RR2 (Lengthanoid)
+            </button>
+            <button
+              type="button"
+              onClick={() => setActivePlayerTag && setActivePlayerTag('#2PP0LP0C')}
+              className="preset-chip"
+            >
+              #2PP0LP0C
+            </button>
+          </div>
         </section>
       )}
 
@@ -286,6 +381,107 @@ export default function DashboardPage({ activePlayerTag, activeClanTag, setActiv
         .hub-card-title { font-size: 1.3rem; margin-bottom: 8px; }
         .hub-card-desc { font-size: 0.9rem; color: var(--text-muted-beige); line-height: 1.5; margin-bottom: 20px; }
         .card-action { display: flex; align-items: center; justify-content: space-between; font-weight: 700; font-size: 0.85rem; color: var(--gold-light); padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); }
+
+        .change-tag-btn {
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          color: #fff;
+          font-size: 0.75rem;
+          font-weight: 700;
+          padding: 2px 8px;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        .change-tag-btn:hover {
+          background: rgba(255, 199, 44, 0.3);
+          border-color: var(--gold-main);
+          color: var(--gold-light);
+        }
+
+        .enter-tag-hero-card {
+          padding: 48px 24px;
+          text-align: center;
+          border: 2px dashed rgba(255, 199, 44, 0.4);
+          background: rgba(15, 20, 35, 0.7);
+          border-radius: 16px;
+          max-width: 720px;
+          margin: 0 auto;
+          width: 100%;
+        }
+        .enter-tag-icon-circle {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 72px;
+          height: 72px;
+          background: rgba(255, 199, 44, 0.12);
+          border: 2px solid var(--border-gold);
+          border-radius: 50%;
+          margin-bottom: 20px;
+          box-shadow: 0 0 20px rgba(255, 199, 44, 0.2);
+        }
+        .inline-tag-form {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          max-width: 480px;
+          margin: 0 auto;
+        }
+        .inline-tag-input {
+          flex: 1;
+          background: #101524;
+          border: 2px solid var(--border-gold);
+          border-radius: 10px;
+          padding: 12px 18px;
+          color: #fff;
+          font-family: var(--font-body);
+          font-size: 1rem;
+          font-weight: 700;
+          letter-spacing: 0.5px;
+          outline: none;
+        }
+        .inline-tag-input:focus {
+          border-color: var(--gold-light);
+          box-shadow: 0 0 12px rgba(255, 199, 44, 0.3);
+        }
+        .inline-tag-btn {
+          padding: 12px 24px;
+          font-size: 0.95rem;
+          cursor: pointer;
+          white-space: nowrap;
+        }
+        .quick-presets-row {
+          margin-top: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+        .quick-presets-label {
+          font-size: 0.75rem;
+          font-weight: 800;
+          color: var(--text-muted-dark);
+          letter-spacing: 0.5px;
+        }
+        .preset-chip {
+          background: rgba(255, 199, 44, 0.1);
+          border: 1px solid var(--border-gold);
+          border-radius: 20px;
+          color: var(--gold-main);
+          font-family: var(--font-heading);
+          font-size: 0.8rem;
+          font-weight: 700;
+          padding: 5px 14px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        .preset-chip:hover {
+          background: rgba(255, 199, 44, 0.25);
+          color: #fff;
+          transform: translateY(-1px);
+        }
       `}</style>
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { Swords, User, Users, Trophy, Search, Activity, RefreshCw, Clock, X, ChevronRight } from 'lucide-react';
 import cocLogo from '../assets/Clash of Clans logo.svg';
 
@@ -11,6 +11,7 @@ export default function Navbar({ activeTag, setActiveTag, onRefresh }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Auto-refresh 60s timer
   useEffect(() => {
@@ -51,7 +52,11 @@ export default function Navbar({ activeTag, setActiveTag, onRefresh }) {
     if (setActiveTag) setActiveTag(cleanTag);
     setSearchInput('');
     setIsDrawerOpen(false);
-    navigate('/player');
+    
+    // If not already on home dashboard or player page, route to player
+    if (location.pathname !== '/' && location.pathname !== '/player') {
+      navigate('/player');
+    }
   };
 
   return (
